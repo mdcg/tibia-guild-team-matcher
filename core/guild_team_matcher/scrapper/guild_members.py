@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from core.guild_team_matcher.models import Player
+from pydantic import ValidationError
 
 
 def get_guild_members(guild_name):
@@ -22,7 +24,7 @@ def get_guild_members(guild_name):
     soup = BeautifulSoup(raw_guild_details_html, "html.parser")
     members_table = soup.find_all("table")[GUILD_TABLE_INDEX]
 
-    return type(members_table)
+    return members_table
 
 
 def filter_members_by_vocation(guild_members):
@@ -52,17 +54,27 @@ def filter_members_by_vocation(guild_members):
     for member_info_tr in guild_members.find_all("tr"):
         member_info_tds = member_info_tr.find_all("td")
         try:
-            member = {
-                "name": member_info_tds[1].text,
-                "details": member_info_tds[1].a["href"],
-                "vocation": member_info_tds[2].text,
-                "level": member_info_tds[3].text,
-            }
-        except (IndexError, AttributeError, TypeError):
+            member = Player(
+                name=member_info_tds[1].text,
+                level=int(member_info_tds[3].text),
+                details=member_info_tds[1].a["href"],
+                vocation=member_info_tds[2].text,
+            )
+        except (
+            AttributeError,
+            IndexError,
+            TypeError,
+            ValidationError,
+            ValueError,
+        ):
             continue
 
         for vocation in members_peer_vocation.keys():
-            if vocation in member["vocation"]:
+            if vocation in member.vocation:
                 members_peer_vocation[vocation].append(member)
 
     return members_peer_vocation
+
+
+if __name__ == "__main__":
+    print(filter_members_by_vocation(get_guild_members("Sucesso")))
