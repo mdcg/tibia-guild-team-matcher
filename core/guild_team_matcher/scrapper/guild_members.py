@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from core.guild_team_matcher.models import Player
+from guild_team_matcher.models import Player
 from pydantic import ValidationError
 
 
