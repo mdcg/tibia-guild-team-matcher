@@ -1,5 +1,8 @@
 from guild_team_matcher.logs import logger
 from guild_team_matcher.settings import BOT_TOKEN
+from guild_team_matcher.exceptions import PlayerNotFound
+from guild_team_matcher.matcher import match_team
+
 
 import discord
 from discord.ext import commands
@@ -20,10 +23,10 @@ bot = commands.Bot(
 )
 
 
-@bot.event
-async def on_ready():
-    """Simple event to know that the bot is ready to be invoked."""
-    logger.info(f"Logged in as {bot.user.name} - {bot.user.id}")
+# @bot.event
+# async def on_ready():
+#     """Simple event to know that the bot is ready to be invoked."""
+#     logger.info(f"Logged in as {bot.user.name} - {bot.user.id}")
 
 
 @bot.command()
@@ -41,6 +44,14 @@ async def match(ctx, player_name: str):
     if not player_name.isalpha():
         await ctx.send("Nome de jogar inválido. Tente novamente.")
         return None
+
+    try:
+        possibilities = match_team(player_name)
+    except PlayerNotFound:
+        await ctx.send("Jogador não encontrado. Tente novamente.")
+        return None
+
+    await ctx.send(possibilities)
 
 
 if __name__ == "__main__":
