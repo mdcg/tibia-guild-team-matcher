@@ -1,8 +1,7 @@
-from guild_team_matcher.logs import logger
-from guild_team_matcher.settings import BOT_TOKEN
 from guild_team_matcher.exceptions import PlayerNotFound
+from guild_team_matcher.logs import logger
 from guild_team_matcher.matcher import match_team
-
+from guild_team_matcher.settings import BOT_TOKEN
 
 import discord
 from discord.ext import commands
@@ -23,10 +22,10 @@ bot = commands.Bot(
 )
 
 
-# @bot.event
-# async def on_ready():
-#     """Simple event to know that the bot is ready to be invoked."""
-#     logger.info(f"Logged in as {bot.user.name} - {bot.user.id}")
+@bot.event
+async def on_ready():
+    """Simple event to know that the bot is ready to be invoked."""
+    logger.info(f"Logged in as {bot.user.name} - {bot.user.id}")
 
 
 @bot.command()
