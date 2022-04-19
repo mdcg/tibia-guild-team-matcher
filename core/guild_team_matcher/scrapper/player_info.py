@@ -57,7 +57,7 @@ def requester_player_details(player_name):
 
     try:
         player_info = Player(
-            name=player_name,
+            name=player_name.title(),
             level=int(player_level),
             vocation=player_vocation,
             details=player_details_url,
